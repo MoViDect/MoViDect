@@ -10,11 +10,11 @@ if __name__ == '__main__':
         if not ret:
             break
 
-    # cv2.imshow("src", frame)
-    # 현재 프레임과 함께 관심영역 시작좌표와 끝좌표 전달
-    mosaic.makeBlur(frame,
-                    [(200, 200), (100, 100)],
-                    [(400, 400), (300, 300)])
+        # cv2.imshow("src", frame)
+        # 현재 프레임과 함께 관심영역 시작좌표와 끝좌표 전달
+        mosaic.makeBlur(frame,
+                        [(200, 200), (100, 100)],
+                        [(400, 400), (300, 300)])
 
         key = cv2.waitKey(25)
         if key == 27:  # Esc
