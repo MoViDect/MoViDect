@@ -1,25 +1,34 @@
 import cv2
-from package.MosaicEncoder import mosaicEncoding
 
-cap = cv2.VideoCapture(0)  # 0번 카메라 = 기본 카메라, 480 * 640 * 3
-mosaic = mosaicEncoding.MosaicEncoder()
+Vid = cv2.VideoCapture('car.mp4')
 
-while True:
-    ret, frame = cap.read()  # 프레임 캡처
-    if not ret:
-        break
+if Vid.isOpened():
+fps = Vid.get(cv2.CAP_PROP_FPS)
+f_count = Vid.get(cv2.CAP_PROP_FRAME_COUNT)
+f_width = round(Vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+f_height = round(Vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    # cv2.imshow("src", frame)
-    # 현재 프레임과 함께 관심영역 시작좌표와 끝좌표 전달
-    mosaic.makeBlur(frame,
-                    [(200, 200), (100, 100)],
-                    [(400, 400), (300, 300)])
 
-    key = cv2.waitKey(25)
-    if key == 27:  # Esc
-        break
+print('Frames per second: ', fps, 'FPS')
+print('Frame count : ', f_count)
+print('Frame width : ', f_width)
+print('Frame height : ', f_height)
 
-del mosaic
-if cap.isOpened():
-    cap.release()
+codec = "DIVX"
+fourcc = cv2.VideoWriter_fourcc(*codec)
+encoded_avi = cv2.VideoWriter("car_en.avi", fourcc, fps, (f_width, f_height))
+
+
+while Vid.isOpened():
+	ret, frame = Vid.read()
+	if ret:
+		key = cv2.waitKey(10)
+        encoded_avi.write(frame)
+        if key == ord('q'):
+            break
+        else:
+            break
+
+
+Vid.release()
 cv2.destroyAllWindows()
