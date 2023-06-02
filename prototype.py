@@ -18,13 +18,16 @@ if __name__ == '__main__':
         for r in results: # Only One Time
             r = r.cpu()
             r = r.numpy()
+            xy1 = []
+            xy2 = []
             try:
                 for box in r.boxes:
                     find = box.data[0]
-                    print(f'{(int(find[0]), int(find[1])), (int(find[2]), int(find[3]))}')
-                    mosaic.makeBlur(frame, [(int(find[0]), int(find[1]))], [(int(find[2]), int(find[3]))])
+                    xy1.append((int(find[0]), int(find[1])))
+                    xy2.append((int(find[2]), int(find[3])))
             except:
                 pass
+            mosaic.makeBlur(frame, xy1, xy2)
 
         cv2.imshow('frame', frame)
         key = cv2.waitKey(10)
