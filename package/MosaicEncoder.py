@@ -11,9 +11,11 @@ class MosaicEncoder:
     def __del__(self):
         self.frames.release()
 
-    def makeBlur(self, frame, xy1, xy2):
+    def makeBlur(self, frame, xy1, xy2, n):
         img_w_mosaic = frame.copy()
         for i in range(len(xy1)):
+	    if i == n:
+		continue
             mosaic_loc = frame[xy1[i][1]:xy2[i][1], xy1[i][0]:xy2[i][0]]
             mosaic_loc = cv2.blur(mosaic_loc, (50, 50))
             cv2.imshow("mosaic_test" + str(i), mosaic_loc)
