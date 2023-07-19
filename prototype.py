@@ -1,6 +1,9 @@
 from ultralytics import YOLO
 import package.MosaicEncoder as mosaicer
 import cv2
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 import torch
 import numpy as np
 
@@ -8,6 +11,11 @@ import numpy as np
 cap = cv2.VideoCapture(0) # WebCam Setting
 model = YOLO('yolov8m.pt') # YOLO model Setting
 mosaic = mosaicer.MosaicEncoder()
+
+# Setting MediaPipe
+base_options = python.BaseOptions(model_asset_path='detector.tflite')
+options = vision.FaceDetectorOptions(base_options=base_options)
+detector = vision.FaceDetector.create_from_options(options)
 
 if __name__ == '__main__':
     while cap.isOpened():
@@ -23,10 +31,17 @@ if __name__ == '__main__':
             try:
                 for box in r.boxes:
                     find = box.data[0]
-                    xy1.append((int(find[0]), int(find[1])))
-                    xy2.append((int(find[2]), int(find[3])))
-            except:
-                pass
+                    face_frame = frame[int(find[1]):int(find[3]), int(find[0]):int(find[2])].astype(np.uint8)
+                    mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=face_frame)
+                    face_detector_result = detector.detect(mp_img)
+
+                    for detection in face_detector_result.detections:
+                        bbox = detection.bounding_box
+                        print(bbox)
+                        xy1.append((int(find[0])+bbox.origin_x, int(find[1])+bbox.origin_y))
+                        xy2.append((int(find[0])+bbox.origin_x+bbox.width, int(find[1])+bbox.origin_y+bbox.height))
+            except Exception as e:
+                print(e)
             mosaic.makeBlur(frame, xy1, xy2)
 
         cv2.imshow('frame', frame)
