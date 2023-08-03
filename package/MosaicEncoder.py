@@ -16,5 +16,4 @@ class MosaicEncoder:
             # cv2.imshow("mosaic_test" + str(i), mosaic_loc)
             img_w_mosaic[xy1[i][1]:xy2[i][1], xy1[i][0]:xy2[i][0]] = mosaic_loc
 
-        cv2.imshow("mosaic_test", img_w_mosaic)
-        self.frames.write(img_w_mosaic)
+        return img_w_mosaic
