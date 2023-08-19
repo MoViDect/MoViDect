@@ -33,21 +33,24 @@ if __name__ == '__main__':
         if not ret:
             cap.release()
             return
-        # cv2.imshow("src", frame)
-        # 현재 프레임과 함께 관심영역 시작좌표와 끝좌표 전달
-        img_w_mosaic = mosaic.makeBlur(frame,
-                        [(200, 200), (100, 100)],
-                        [(400, 400), (300, 300)])
 
-        img = Image.fromarray(img_w_mosaic)  # Image 객체로 변환
+
+        img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))  # Image 객체로 변환
         imgtk = ImageTk.PhotoImage(image=img)  # ImageTk 객체로 변환
         lbl1.imgtk = imgtk
         lbl1.configure(image=imgtk)
 
-        img2 = Image.fromarray(frame)  # Image 객체로 변환
+        # cv2.imshow("src", frame)
+        # 현재 프레임과 함께 관심영역 시작좌표와 끝좌표 전달
+        img_w_mosaic = mosaic.makeBlur(frame,
+                                       [(200, 200), (100, 100)],
+                                       [(400, 400), (300, 300)])
+
+        img2 = Image.fromarray(cv2.cvtColor(img_w_mosaic, cv2.COLOR_BGR2RGB))  # Image 객체로 변환
         imgtk2 = ImageTk.PhotoImage(image=img2)
         lbl2.imgtk = imgtk2
         lbl2.configure(image=imgtk2)
+
         lbl1.after(10, run_mosic)
 
     run_mosic()
