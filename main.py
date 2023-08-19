@@ -25,8 +25,8 @@ if __name__ == '__main__':
     lbl1.grid()
     lbl2 = tk.Label(frame2)
     lbl2.grid()
-
-    cap = cv2.VideoCapture(1)
+    # todo 카메라 선택 UI 추가 해서 먼저 고를 수 있도록 변경
+    cap = cv2.VideoCapture(0)
     mosaic = MosaicEncoder()
     def run_mosic():
         ret, frame = cap.read()
