@@ -41,7 +41,7 @@ class MosaicEncoder:
         new_xy_list = []
         for i in range(len(xy1)):
             new_xy_list.append((xy1[i], xy2[i]))
-        print("1. ", new_xy_list)
+        # print("1. ", new_xy_list)
 
         # 2. 사이즈 확인
         size_list = []
@@ -50,26 +50,26 @@ class MosaicEncoder:
             y = (xy1[i][1] - xy2[i][1])
 
             size_list.append(x * y)
-        print("2. ", size_list)
+        # print("2. ", size_list)
 
         # 3. 사이즈 오름차순 정렬
         size_sorted = np.sort(size_list)
         size_sorted_index = np.argsort(size_list)
 
         xy_sorted = [new_xy_list[i] for i in size_sorted_index]
-        print("3. ", xy_sorted)
+        # print("3. ", xy_sorted)
 
         # 4. 뒤집어서 내림차순으로?
         xy_sorted = xy_sorted[::-1]
-        print("4. ", xy_sorted)
+        # print("4. ", xy_sorted)
 
         for i, xys in enumerate(xy_sorted):
             print(i, xys)
             if i <= n:
                 continue
 
-            print(xys[0][1],  xys[1][1])
-            print(xys[0][0],  xys[1][0])
+            # print(xys[0][1],  xys[1][1])
+            # print(xys[0][0],  xys[1][0])
             mosaic_loc = frame[xys[0][1]: xys[1][1], xys[0][0]: xys[1][0]]
             mosaic_loc = cv2.blur(mosaic_loc, (50, 50))
             # cv2.imshow("mosaic_test" + str(i), mosaic_loc)
