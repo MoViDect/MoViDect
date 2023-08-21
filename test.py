@@ -1,8 +1,7 @@
 import cv2
 import mosaicEncoding
 
-cap = cv2.VideoCapture(0)  # 0번 카메라 = 기본 카메라, 480 * 640 * 3
-mosaic = mosaicEncoding.MosaicEncoder()
+Vid = cv2.VideoCapture('car.mp4')
 
 
 test_tuple1 = [(100, 100), (110, 110), (130, 130), (160, 160), (200, 200)]
@@ -20,9 +19,10 @@ while True:
                     test_tuple2,
                     -1)
 
-    key = cv2.waitKey(25)
-    if key == 27:  # Esc
-        break
+print('Frames per second: ', fps, 'FPS')
+print('Frame count : ', f_count)
+print('Frame width : ', f_width)
+print('Frame height : ', f_height)
 
 del mosaic
 if cap.isOpened():

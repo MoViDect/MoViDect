@@ -1,15 +1,9 @@
 opencv-python >= 4.7.0.72
-
 ultralytics >= 8.0.103
-
 matplotlib >= 3.7.1
-
 numpy >= 1.24.3
-
 pandas >= 2.0.1
-
 Pillow >= 9.5.0
-
 torch >= 2.0.1
-
 torchvision >= 0.15.2
+mediapipe >= 0.10.0
