@@ -14,11 +14,12 @@ class MosaicEncoder:
     # description: 이미지와 좌표, select변수를 입력받고
     #              좌표에 해당하는 모든 영역을 모자이크
     #              이 때, select 변수에 해당하는 영역은 모자이크 제외
-    def makeBlur1(self, frame, xy1, xy2, n):
+    # target ( 모자이크 예외 필요한 인원 수 (기본갑 null))
+    def makeBlur1(self, frame, xy1, xy2, target=None):
         img_w_mosaic = frame.copy()
 
         for i in range(len(xy1)):
-            if i == n:
+            if i == (target-1):
                 continue
             mosaic_loc = frame[xy1[i][1]:xy2[i][1], xy1[i][0]:xy2[i][0]]
             mosaic_loc = cv2.blur(mosaic_loc, (50, 50))
@@ -33,7 +34,7 @@ class MosaicEncoder:
     # description: 위의 함수와 달리, 영역들을 size별로 정렬하고
     #              총 몇명까지 모자이크를 제외할 것인 지 확인하고
     #              size가 큰 순으로 제외하고 나머지 모자이크
-    def makeBlur2(self, frame, xy1, xy2, n):
+    def makeBlur2(self, frame, xy1, xy2, target=None):
         img_w_mosaic = frame.copy()
 
         # TODO: 영역 사이즈 별로 정렬
@@ -65,7 +66,7 @@ class MosaicEncoder:
 
         for i, xys in enumerate(xy_sorted):
             print(i, xys)
-            if i <= n:
+            if i <= (target-1):
                 continue
 
             # print(xys[0][1],  xys[1][1])
@@ -75,5 +76,6 @@ class MosaicEncoder:
             # cv2.imshow("mosaic_test" + str(i), mosaic_loc)
             img_w_mosaic[xys[0][1]: xys[1][1], xys[0][0]: xys[1][0]] = mosaic_loc
 
-        cv2.imshow("mosaic_test", img_w_mosaic)
-        self.frames.write(img_w_mosaic)
+        # cv2.imshow("mosaic_test", img_w_mosaic)
+        # self.frames.write(img_w_mosaic)
+        return img_w_mosaic
