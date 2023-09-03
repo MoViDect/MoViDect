@@ -80,7 +80,6 @@ if __name__ == '__main__':
                                        target = target_getter(num2.get()))
 
         img2 = img_w_mosaic
-        img2 = cv2.cvtColor(img_w_mosaic, cv2.COLOR_BGR2RGB)
         img2 = Image.fromarray(img2)  # Image 객체로 변환
         imgtk2 = ImageTk.PhotoImage(image=img2)
         lbl2.imgtk = imgtk2
