@@ -8,25 +8,53 @@ if __name__ == '__main__':
     window = tk.Tk()
     window.title("TK-CV2 TEST")
     window.resizable(False, False)
-    window.geometry('1200x450')
+    window.geometry('1200x470')
 
     label1 = tk.Label(window, text='CV2 TEST 2023-08-04 VIEW 1', font=('Arial', 10))
     label1.place(x=0, y=0)
+    label11 = tk.Label(window, text='CAMERA : ', font=('Arial', 10))
+    label11.place(x=0, y=20)
     label2 = tk.Label(window, text='CV2 TEST 2023-08-04 VIEW 2', font=('Arial', 10))
     label2.place(x=600, y=0)
+    label21 = tk.Label(window, text='TARGET : ', font=('Arial', 10))
+    label21.place(x=600, y=20)
     # 프레임 추가
     frame1 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame1.place(x=0, y=20)
+    frame1.place(x=0, y=40)
     frame2 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame2.place(x=600, y=20)
+    frame2.place(x=600, y=40)
 
     # 라벨1 추가
     lbl1 = tk.Label(frame1)
     lbl1.grid()
     lbl2 = tk.Label(frame2)
     lbl2.grid()
+
+    # 입력값(타겟)
+    num1 = tk.StringVar()
+    nin1 = tk.Entry(window, textvariable=num1)
+    nin1.place(x=70, y=20)
+    nin1.insert(0, "0")
+
+    #입력값(타겟)
+    num2 = tk.StringVar()
+    nin2 = tk.Entry(window, textvariable=num2)
+    nin2.place(x=670, y=20)
+    nin2.insert(0, "0")
+
+    def target_getter(number):
+        try:
+            if int(number) > 100:
+                return 0
+            else:
+                return int(number)
+        except:
+            return 0
+
+
+    # sel1 = tk.
     # todo 카메라 선택 UI 추가 해서 먼저 고를 수 있도록 변경
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(target_getter(num1))
     mosaic = MosaicEncoder()
     def run_mosic():
         ret, frame = cap.read()
@@ -43,10 +71,13 @@ if __name__ == '__main__':
 
         # cv2.imshow("src", frame)
         # 현재 프레임과 함께 관심영역 시작좌표와 끝좌표 전달
+        # 좌표 순서는
+        # [(1x시작,1y시작), (2x,2y)...
+        # [(1x끝,1y끝), (2x,2y)...
         img_w_mosaic = mosaic.makeBlur2(frame,
-                                       xy1=[(200, 200), (100, 100)],
-                                       xy2=[(400, 400), (300, 300)],
-                                       target = 0)
+                                       xy1=[(300, 300), (100, 100), (400, 100)],
+                                       xy2=[(400, 400), (300, 300), (550, 250)],
+                                       target = target_getter(num2.get()))
 
         img2 = img_w_mosaic
         img2 = cv2.cvtColor(img_w_mosaic, cv2.COLOR_BGR2RGB)
