@@ -6,3 +6,4 @@ encoding_test.mp4
 build
 test.py
 dist
+*.spec
