@@ -7,3 +7,6 @@ Pillow >= 9.5.0
 torch >= 2.0.1
 torchvision >= 0.15.2
 mediapipe >= 0.10.0
+pyinstaller==5.13.2
+pyinstaller-hooks-contrib==2023.8
+pyvirtualcam==0.10.2
