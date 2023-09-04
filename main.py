@@ -1,4 +1,5 @@
 import cv2
+import os
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
@@ -17,7 +18,10 @@ def select_camera(camera):
 
 if __name__ == '__main__':
     window = ttk.Window(themename="darkly")
-    window.title("TK-CV2 TEST")
+    window.title("MoviDict")
+    path = os.path.join(os.path.dirname(__file__), 'icon.ico')
+    if os.path.isfile(path):
+        window.iconbitmap(path)
     window.resizable(False, False)
     window.geometry('1520x560')
 
