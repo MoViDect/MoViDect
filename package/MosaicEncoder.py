@@ -25,7 +25,6 @@ class MosaicEncoder:
                 continue
             mosaic_loc = frame[xy1[i][1]:xy2[i][1], xy1[i][0]:xy2[i][0]]
             mosaic_loc = cv2.blur(mosaic_loc, (50, 50))
-            # cv2.imshow("mosaic_test" + str(i), mosaic_loc)
             img_w_mosaic[xy1[i][1]:xy2[i][1], xy1[i][0]:xy2[i][0]] = mosaic_loc
 
         cv2.imshow("mosaic_test", img_w_mosaic)
@@ -44,7 +43,6 @@ class MosaicEncoder:
         new_xy_list = []
         for i in range(len(xy1)):
             new_xy_list.append((xy1[i], xy2[i]))
-        # print("1. ", new_xy_list)
 
         # 2. 사이즈 확인
         size_list = []
@@ -60,27 +58,17 @@ class MosaicEncoder:
         size_sorted_index = np.argsort(size_list)
 
         xy_sorted = [new_xy_list[i] for i in size_sorted_index]
-        # print("3. ", xy_sorted)
 
         # 4. 뒤집어서 내림차순으로?
         xy_sorted = xy_sorted[::-1]
-        # print("4. ", xy_sorted)
-
         for i, xys in enumerate(xy_sorted):
             print(i, xys)
             if i <= (target-1):
                 continue
-
-            # print(xys[0][1],  xys[1][1])
-            # print(xys[0][0],  xys[1][0])
             mosaic_loc = frame[xys[0][1]: xys[1][1], xys[0][0]: xys[1][0]]
             mosaic_loc = cv2.blur(mosaic_loc, (50, 50))
-            # cv2.imshow("mosaic_test" + str(i), mosaic_loc)
             img_w_mosaic[xys[0][1]: xys[1][1], xys[0][0]: xys[1][0]] = mosaic_loc
 
-        # cv2.imshow("mosaic_test", img_w_mosaic)
-        # self.frames.write(img_w_mosaic)
-        # cv2.VideoWriter()
         img_w_mosaic = cv2.cvtColor(img_w_mosaic, cv2.COLOR_BGR2RGB)
 
         self.cam.send(img_w_mosaic)
