@@ -6,25 +6,34 @@ from PIL import ImageTk, Image
 from package.MosaicEncoder import MosaicEncoder
 
 
+def select_camera(camera):
+    if camera == "카메라 1":
+        return 0
+    elif camera == "카메라 2":
+        return 1
+    else:
+        return 0
+
+
 if __name__ == '__main__':
     window = ttk.Window(themename="darkly")
     window.title("TK-CV2 TEST")
     window.resizable(False, False)
-    window.geometry('1260x560')
+    window.geometry('1520x560')
 
-    label1 = ttk.Label(window, text='CV2 TEST 2023-08-04 VIEW 1', font=('Arial', 10))
-    label1.place(x=10, y=10)
-    label11 = ttk.Label(window, text='CAMERA : ', font=('Arial', 10))
-    label11.place(x=10, y=30)
-    label2 = ttk.Label(window, text='CV2 TEST 2023-08-04 VIEW 2', font=('Arial', 10))
-    label2.place(x=620, y=10)
-    label21 = ttk.Label(window, text='TARGET : ', font=('Arial', 10))
-    label21.place(x=620, y=30)
-    # 프레임 추가
-    frame1 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame1.place(x=10, y=60)
-    frame2 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame2.place(x=620, y=60)
+    # 틀 추가
+    tframe1 = ttk.Labelframe(window, text="ORIGINAL (INPUT)", width=640, height=500)
+    tframe1.place(x=10, y=30)
+    tframe2 = ttk.Labelframe(window, text="OUTPUT", width=640, height=500)
+    tframe2.place(x=660, y=30)
+    ctrlframe = ttk.Labelframe(window, text="CONTROL", width=250, height=500)
+    ctrlframe.place(x=1320, y=30)
+
+    # 프레임 추가 (웹캠및 출력 이미지 삽입 프레임)
+    frame1 = tk.Frame(tframe1, bg="white", width=640, height=480)  # 프레임 너비, 높이 설정
+    frame1.pack()
+    frame2 = tk.Frame(tframe2, bg="white", width=640, height=480)  # 프레임 너비, 높이 설정
+    frame2.pack()
 
     # 라벨1 추가
     lbl1 = tk.Label(frame1)
@@ -32,18 +41,22 @@ if __name__ == '__main__':
     lbl2 = tk.Label(frame2)
     lbl2.grid()
 
-    # 입력값(타겟)
-    num1 = tk.StringVar()
-    nin1 = tk.Entry(window, textvariable=num1)
-    nin1.place(x=100, y=30)
-    nin1.insert(0, "0")
+    # 입력값(카메라 선택)
+    label11 = ttk.Label(ctrlframe, text='CAMERA', font=('Arial', 10))
+    camera_combobox = ttk.Combobox(ctrlframe, values=["카메라 1", "카메라 2"])
+    camera_combobox.pack()
 
     #입력값(타겟)
+    label21 = ttk.Label(ctrlframe, text='TARGET', font=('Arial', 10))
+    label21.pack()
     num2 = tk.StringVar()
-    nin2 = tk.Entry(window, textvariable=num2)
-    nin2.place(x=700, y=30)
+    nin2 = tk.Entry(ctrlframe, textvariable=num2)
+    nin2.pack()
     nin2.insert(0, "0")
 
+    cap = cv2.VideoCapture(select_camera(camera_combobox.get()))
+    print(camera_combobox.get())
+    mosaic = MosaicEncoder()
     def target_getter(number):
         try:
             if int(number) > 100:
@@ -54,10 +67,7 @@ if __name__ == '__main__':
             return 0
 
 
-    # sel1 = tk.
-    # todo 카메라 선택 UI 추가 해서 먼저 고를 수 있도록 변경
-    cap = cv2.VideoCapture(target_getter(num1))
-    mosaic = MosaicEncoder()
+
     def run_mosic():
         ret, frame = cap.read()
         if not ret:
