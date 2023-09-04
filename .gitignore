@@ -5,3 +5,4 @@ encoding_test.mp4
 *.pyc
 build
 test.py
+dist
