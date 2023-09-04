@@ -4,8 +4,44 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from PIL import ImageTk, Image
+import mediapipe as mp
 from package.MosaicEncoder import MosaicEncoder
+from ultralytics import YOLO
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+import torch
+import numpy as np
 
+model = YOLO('yolov8m.pt') # YOLO model Setting
+
+# Setting MediaPipe
+base_options = python.BaseOptions(model_asset_path='detector.tflite')
+options = vision.FaceDetectorOptions(base_options=base_options)
+detector = vision.FaceDetector.create_from_options(options)
+
+def find_targets(frame):
+    results = model.predict(source=frame, save=False, save_txt=False, device=0, stream=True,
+                            classes=0)  # Yolo model Predict, Find Person Class Only
+    for r in results:  # Only One Time
+        r = r.cpu()
+        r = r.numpy()
+        xy1 = []
+        xy2 = []
+        try:
+            for box in r.boxes:
+                find = box.data[0]
+                face_frame = frame[int(find[1]):int(find[3]), int(find[0]):int(find[2])].astype(np.uint8)
+                mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=face_frame)
+                face_detector_result = detector.detect(mp_img)
+
+                for detection in face_detector_result.detections:
+                    bbox = detection.bounding_box
+                    print(bbox)
+                    xy1.append((int(find[0]) + bbox.origin_x, int(find[1]) + bbox.origin_y))
+                    xy2.append((int(find[0]) + bbox.origin_x + bbox.width, int(find[1]) + bbox.origin_y + bbox.height))
+        except Exception as e:
+            print(e)
+        return [xy1, xy2]
 
 def select_camera(camera):
     if camera == "카메라 1":
@@ -90,9 +126,10 @@ if __name__ == '__main__':
         # 좌표 순서는
         # [(1x시작,1y시작), (2x,2y)...
         # [(1x끝,1y끝), (2x,2y)...
+        target_axis = find_targets(frame)
         img_w_mosaic = mosaic.makeBlur2(frame,
-                                       xy1=[(300, 300), (100, 100), (400, 100)],
-                                       xy2=[(400, 400), (300, 300), (550, 250)],
+                                       target_axis[0],
+                                       target_axis[1],
                                        target = target_getter(num2.get()))
 
         img2 = img_w_mosaic
