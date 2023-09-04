@@ -3,3 +3,5 @@
 encoding_test.mp4
 *.pt
 *.pyc
+build
+test.py
