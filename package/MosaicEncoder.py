@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import pyvirtualcam
 
 
 class MosaicEncoder:
@@ -8,6 +9,7 @@ class MosaicEncoder:
         fps = 25.40
         fourcc = cv2.VideoWriter_fourcc(*'MP4V')  # 인코딩 포맷 문자
         self.frames = cv2.VideoWriter(file_path, fourcc, fps, (640, 480))
+        self.cam = pyvirtualcam.Camera(width=640, height=480, fps=30)
 
     # intput: 이미지, 시작좌표(좌측상단) list, 끝좌표(우측하단) list, select변수
     # output: 모자이크 처리된 이미지
@@ -78,4 +80,9 @@ class MosaicEncoder:
 
         # cv2.imshow("mosaic_test", img_w_mosaic)
         # self.frames.write(img_w_mosaic)
+        # cv2.VideoWriter()
+        img_w_mosaic = cv2.cvtColor(img_w_mosaic, cv2.COLOR_BGR2RGB)
+
+        self.cam.send(img_w_mosaic)
+
         return img_w_mosaic
