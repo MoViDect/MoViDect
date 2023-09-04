@@ -1,28 +1,30 @@
 import cv2
 import tkinter as tk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 from PIL import ImageTk, Image
 from package.MosaicEncoder import MosaicEncoder
 
 
 if __name__ == '__main__':
-    window = tk.Tk()
+    window = ttk.Window(themename="darkly")
     window.title("TK-CV2 TEST")
     window.resizable(False, False)
-    window.geometry('1200x470')
+    window.geometry('1260x560')
 
-    label1 = tk.Label(window, text='CV2 TEST 2023-08-04 VIEW 1', font=('Arial', 10))
-    label1.place(x=0, y=0)
-    label11 = tk.Label(window, text='CAMERA : ', font=('Arial', 10))
-    label11.place(x=0, y=20)
-    label2 = tk.Label(window, text='CV2 TEST 2023-08-04 VIEW 2', font=('Arial', 10))
-    label2.place(x=600, y=0)
-    label21 = tk.Label(window, text='TARGET : ', font=('Arial', 10))
-    label21.place(x=600, y=20)
+    label1 = ttk.Label(window, text='CV2 TEST 2023-08-04 VIEW 1', font=('Arial', 10))
+    label1.place(x=10, y=10)
+    label11 = ttk.Label(window, text='CAMERA : ', font=('Arial', 10))
+    label11.place(x=10, y=30)
+    label2 = ttk.Label(window, text='CV2 TEST 2023-08-04 VIEW 2', font=('Arial', 10))
+    label2.place(x=620, y=10)
+    label21 = ttk.Label(window, text='TARGET : ', font=('Arial', 10))
+    label21.place(x=620, y=30)
     # 프레임 추가
     frame1 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame1.place(x=0, y=40)
+    frame1.place(x=10, y=60)
     frame2 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame2.place(x=600, y=40)
+    frame2.place(x=620, y=60)
 
     # 라벨1 추가
     lbl1 = tk.Label(frame1)
@@ -33,13 +35,13 @@ if __name__ == '__main__':
     # 입력값(타겟)
     num1 = tk.StringVar()
     nin1 = tk.Entry(window, textvariable=num1)
-    nin1.place(x=70, y=20)
+    nin1.place(x=100, y=30)
     nin1.insert(0, "0")
 
     #입력값(타겟)
     num2 = tk.StringVar()
     nin2 = tk.Entry(window, textvariable=num2)
-    nin2.place(x=670, y=20)
+    nin2.place(x=700, y=30)
     nin2.insert(0, "0")
 
     def target_getter(number):
