@@ -1,11 +1,6 @@
 from ultralytics import YOLO
 import package.MosaicEncoder as mosaicer
 import cv2
-import mediapipe as mp
-from mediapipe.tasks import python
-from mediapipe.tasks.python import vision
-import torch
-import numpy as np
 
 # Setting Variables
 cap = cv2.VideoCapture(0) # WebCam Setting
@@ -13,10 +8,6 @@ model = YOLO('yolov8n.pt') # YOLO model Setting
 face_model = YOLO('face.pt')
 mosaic = mosaicer.MosaicEncoder()
 
-# Setting MediaPipe
-# base_options = python.BaseOptions(model_asset_path='detector.tflite')
-# options = vision.FaceDetectorOptions(base_options=base_options)
-# detector = vision.FaceDetector.create_from_options(options)
 
 if __name__ == '__main__':
     while cap.isOpened():
