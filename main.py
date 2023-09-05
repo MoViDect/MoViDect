@@ -4,41 +4,33 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from PIL import ImageTk, Image
-import mediapipe as mp
 from package.MosaicEncoder import MosaicEncoder
 from ultralytics import YOLO
-from mediapipe.tasks import python
-from mediapipe.tasks.python import vision
-import torch
-import numpy as np
 
-model = YOLO('yolov8m.pt') # YOLO model Setting
 
-# Setting MediaPipe
-base_options = python.BaseOptions(model_asset_path='detector.tflite')
-options = vision.FaceDetectorOptions(base_options=base_options)
-detector = vision.FaceDetector.create_from_options(options)
+model = YOLO('face.pt') # YOLO model Setting
+
 
 def find_targets(frame):
-    results = model.predict(source=frame, save=False, save_txt=False, device=0, stream=True,
-                            classes=0)  # Yolo model Predict, Find Person Class Only
+    results = model.track(source=frame, save=False, save_txt=False, device=0, stream=True, classes=0, tracker='botsort.yaml')  # Yolo model Predict, Find Person Class Only
+
     for r in results:  # Only One Time
         r = r.cpu()
         r = r.numpy()
+        print(r.boxes.data)
+        print(r.boxes.is_track)
         xy1 = []
         xy2 = []
         try:
             for box in r.boxes:
                 find = box.data[0]
-                face_frame = frame[int(find[1]):int(find[3]), int(find[0]):int(find[2])].astype(np.uint8)
-                mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=face_frame)
-                face_detector_result = detector.detect(mp_img)
 
-                for detection in face_detector_result.detections:
-                    bbox = detection.bounding_box
-                    print(bbox)
-                    xy1.append((int(find[0]) + bbox.origin_x, int(find[1]) + bbox.origin_y))
-                    xy2.append((int(find[0]) + bbox.origin_x + bbox.width, int(find[1]) + bbox.origin_y + bbox.height))
+                # 설정한 인물이 모자이크 안되게 하는 부분 (트랙킹)
+                # if find[4]==1:
+                #     continue
+
+                xy1.append((int(find[0]), int(find[1])))
+                xy2.append((int(find[2]), int(find[3])))
         except Exception as e:
             print(e)
         return [xy1, xy2]
