@@ -1,28 +1,79 @@
 import cv2
+import os
 import tkinter as tk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 from PIL import ImageTk, Image
+import mediapipe as mp
 from package.MosaicEncoder import MosaicEncoder
+from ultralytics import YOLO
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+import torch
+import numpy as np
+
+model = YOLO('yolov8m.pt') # YOLO model Setting
+
+# Setting MediaPipe
+base_options = python.BaseOptions(model_asset_path='detector.tflite')
+options = vision.FaceDetectorOptions(base_options=base_options)
+detector = vision.FaceDetector.create_from_options(options)
+
+def find_targets(frame):
+    results = model.predict(source=frame, save=False, save_txt=False, device=0, stream=True,
+                            classes=0)  # Yolo model Predict, Find Person Class Only
+    for r in results:  # Only One Time
+        r = r.cpu()
+        r = r.numpy()
+        xy1 = []
+        xy2 = []
+        try:
+            for box in r.boxes:
+                find = box.data[0]
+                face_frame = frame[int(find[1]):int(find[3]), int(find[0]):int(find[2])].astype(np.uint8)
+                mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=face_frame)
+                face_detector_result = detector.detect(mp_img)
+
+                for detection in face_detector_result.detections:
+                    bbox = detection.bounding_box
+                    print(bbox)
+                    xy1.append((int(find[0]) + bbox.origin_x, int(find[1]) + bbox.origin_y))
+                    xy2.append((int(find[0]) + bbox.origin_x + bbox.width, int(find[1]) + bbox.origin_y + bbox.height))
+        except Exception as e:
+            print(e)
+        return [xy1, xy2]
+
+def select_camera(camera):
+    if camera == "카메라 1":
+        return 0
+    elif camera == "카메라 2":
+        return 1
+    else:
+        return 0
 
 
 if __name__ == '__main__':
-    window = tk.Tk()
-    window.title("TK-CV2 TEST")
+    window = ttk.Window(themename="darkly")
+    window.title("MoviDict")
+    path = os.path.join(os.path.dirname(__file__), 'icon.ico')
+    if os.path.isfile(path):
+        window.iconbitmap(path)
     window.resizable(False, False)
-    window.geometry('1200x470')
+    window.geometry('1520x560')
 
-    label1 = tk.Label(window, text='CV2 TEST 2023-08-04 VIEW 1', font=('Arial', 10))
-    label1.place(x=0, y=0)
-    label11 = tk.Label(window, text='CAMERA : ', font=('Arial', 10))
-    label11.place(x=0, y=20)
-    label2 = tk.Label(window, text='CV2 TEST 2023-08-04 VIEW 2', font=('Arial', 10))
-    label2.place(x=600, y=0)
-    label21 = tk.Label(window, text='TARGET : ', font=('Arial', 10))
-    label21.place(x=600, y=20)
-    # 프레임 추가
-    frame1 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame1.place(x=0, y=40)
-    frame2 = tk.Frame(window, bg="white", width=600, height=400)  # 프레임 너비, 높이 설정
-    frame2.place(x=600, y=40)
+    # 틀 추가
+    tframe1 = ttk.Labelframe(window, text="ORIGINAL (INPUT)", width=640, height=500)
+    tframe1.place(x=10, y=30)
+    tframe2 = ttk.Labelframe(window, text="OUTPUT", width=640, height=500)
+    tframe2.place(x=660, y=30)
+    ctrlframe = ttk.Labelframe(window, text="CONTROL", width=250, height=500)
+    ctrlframe.place(x=1320, y=30)
+
+    # 프레임 추가 (웹캠및 출력 이미지 삽입 프레임)
+    frame1 = tk.Frame(tframe1, bg="white", width=640, height=480)  # 프레임 너비, 높이 설정
+    frame1.pack()
+    frame2 = tk.Frame(tframe2, bg="white", width=640, height=480)  # 프레임 너비, 높이 설정
+    frame2.pack()
 
     # 라벨1 추가
     lbl1 = tk.Label(frame1)
@@ -30,18 +81,22 @@ if __name__ == '__main__':
     lbl2 = tk.Label(frame2)
     lbl2.grid()
 
-    # 입력값(타겟)
-    num1 = tk.StringVar()
-    nin1 = tk.Entry(window, textvariable=num1)
-    nin1.place(x=70, y=20)
-    nin1.insert(0, "0")
+    # 입력값(카메라 선택)
+    label11 = ttk.Label(ctrlframe, text='CAMERA', font=('Arial', 10))
+    camera_combobox = ttk.Combobox(ctrlframe, values=["카메라 1", "카메라 2"])
+    camera_combobox.pack()
 
     #입력값(타겟)
+    label21 = ttk.Label(ctrlframe, text='TARGET', font=('Arial', 10))
+    label21.pack()
     num2 = tk.StringVar()
-    nin2 = tk.Entry(window, textvariable=num2)
-    nin2.place(x=670, y=20)
+    nin2 = tk.Entry(ctrlframe, textvariable=num2)
+    nin2.pack()
     nin2.insert(0, "0")
 
+    cap = cv2.VideoCapture(select_camera(camera_combobox.get()))
+    print(camera_combobox.get())
+    mosaic = MosaicEncoder()
     def target_getter(number):
         try:
             if int(number) > 100:
@@ -52,10 +107,7 @@ if __name__ == '__main__':
             return 0
 
 
-    # sel1 = tk.
-    # todo 카메라 선택 UI 추가 해서 먼저 고를 수 있도록 변경
-    cap = cv2.VideoCapture(target_getter(num1))
-    mosaic = MosaicEncoder()
+
     def run_mosic():
         ret, frame = cap.read()
         if not ret:
@@ -74,9 +126,10 @@ if __name__ == '__main__':
         # 좌표 순서는
         # [(1x시작,1y시작), (2x,2y)...
         # [(1x끝,1y끝), (2x,2y)...
+        target_axis = find_targets(frame)
         img_w_mosaic = mosaic.makeBlur2(frame,
-                                       xy1=[(300, 300), (100, 100), (400, 100)],
-                                       xy2=[(400, 400), (300, 300), (550, 250)],
+                                       target_axis[0],
+                                       target_axis[1],
                                        target = target_getter(num2.get()))
 
         img2 = img_w_mosaic
