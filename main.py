@@ -54,11 +54,11 @@ if __name__ == '__main__':
     window.geometry('1520x560')
 
     # 틀 추가
-    tframe1 = ttk.Labelframe(window, text="ORIGINAL (INPUT)", width=640, height=500, bootstyle="info")
+    tframe1 = ttk.Labelframe(window, text="ORIGINAL (INPUT)", width=640, height=500)
     tframe1.place(x=10, y=30)
     tframe2 = ttk.Labelframe(window, text="OUTPUT", width=640, height=500, bootstyle="danger")
     tframe2.place(x=660, y=30)
-    ctrlframe = ttk.Labelframe(window, text="CONTROL", width=250, height=500, bootstyle="warning")
+    ctrlframe = ttk.Labelframe(window, text="CONTROL", width=250, height=500)
     ctrlframe.place(x=1320, y=30)
 
     # 프레임 추가 (웹캠및 출력 이미지 삽입 프레임)
