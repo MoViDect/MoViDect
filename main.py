@@ -74,9 +74,9 @@ if __name__ == '__main__':
     lbl2.grid()
 
     # 입력값(카메라 선택)
-    label11 = ttk.Label(ctrlframe, text='CAMERA', font=('Arial', 10))
-    camera_combobox = ttk.Combobox(ctrlframe, values=["카메라 1", "카메라 2"])
-    camera_combobox.pack()
+    # label11 = ttk.Label(ctrlframe, text='CAMERA', font=('Arial', 10))
+    # camera_combobox = ttk.Combobox(ctrlframe, values=["카메라 1", "카메라 2"])
+    # camera_combobox.pack()
 
     #입력값(타겟)
     label21 = ttk.Label(ctrlframe, text='TARGET', font=('Arial', 10))
@@ -86,8 +86,8 @@ if __name__ == '__main__':
     nin2.pack()
     nin2.insert(0, "0")
 
-    cap = cv2.VideoCapture(select_camera(camera_combobox.get()))
-    print(camera_combobox.get())
+    cap = cv2.VideoCapture(select_camera(0))
+    print(0)
     mosaic = MosaicEncoder()
     def target_getter(number):
         try:
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         # [(1x시작,1y시작), (2x,2y)...
         # [(1x끝,1y끝), (2x,2y)...
         target_axis = find_targets(frame)
-        img_w_mosaic = mosaic.makeBlur2(frame,
+        img_w_mosaic = mosaic.makeBlur3(frame,
                                        target_axis[0],
                                        target_axis[1],
                                        target = target_getter(num2.get()))
