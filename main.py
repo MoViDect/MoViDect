@@ -44,7 +44,29 @@ def select_camera(camera):
         return 0
 
 
+def increase_i():
+    global target
+    target += 1
+    update_label()
+
+
+def decrease_i():
+    global target
+    if target > 0:
+        target -= 1
+    update_label()
+
+
+def update_label():
+    label.config(text=f"target: {target}")
+    if target == 0:
+        decrease_button.config(state=tk.DISABLED)
+    else:
+        decrease_button.config(state=tk.NORMAL)
+
+
 if __name__ == '__main__':
+    target = 0
     window = ttk.Window(themename="darkly")
     window.title("MoviDict")
     path = os.path.join(os.path.dirname(__file__), 'icon.ico')
@@ -79,12 +101,12 @@ if __name__ == '__main__':
     # camera_combobox.pack()
 
     #입력값(타겟)
-    label21 = ttk.Label(ctrlframe, text='TARGET', font=('Arial', 10))
-    label21.pack()
-    num2 = tk.StringVar()
-    nin2 = tk.Entry(ctrlframe, textvariable=num2)
-    nin2.pack()
-    nin2.insert(0, "0")
+    label = ttk.Label(ctrlframe, text=f"TARGET : {target}")
+    label.pack(padx=20, pady=10)
+    increase_button = ttk.Button(ctrlframe, text="+ Increase", command=increase_i)
+    increase_button.pack(padx=20, pady=5)
+    decrease_button = ttk.Button(ctrlframe, text="- Decrease", command=decrease_i)
+    decrease_button.pack(padx=20, pady=5)
 
     cap = cv2.VideoCapture(select_camera(0))
     print(0)
@@ -122,7 +144,7 @@ if __name__ == '__main__':
         img_w_mosaic = mosaic.makeBlur3(frame,
                                        target_axis[0],
                                        target_axis[1],
-                                       target = target_getter(num2.get()))
+                                       target = target_getter(target))
 
         img2 = img_w_mosaic
         img2 = Image.fromarray(img2)  # Image 객체로 변환
