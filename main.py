@@ -44,7 +44,29 @@ def select_camera(camera):
         return 0
 
 
+def increase_i():
+    global target
+    target += 1
+    update_label()
+
+
+def decrease_i():
+    global target
+    if target > 0:
+        target -= 1
+    update_label()
+
+
+def update_label():
+    label.config(text=f"target: {target}")
+    if target == 0:
+        decrease_button.config(state=tk.DISABLED)
+    else:
+        decrease_button.config(state=tk.NORMAL)
+
+
 if __name__ == '__main__':
+    target = 0
     window = ttk.Window(themename="darkly")
     window.title("MoviDict")
     path = os.path.join(os.path.dirname(__file__), 'icon.ico')
@@ -56,7 +78,7 @@ if __name__ == '__main__':
     # 틀 추가
     tframe1 = ttk.Labelframe(window, text="ORIGINAL (INPUT)", width=640, height=500)
     tframe1.place(x=10, y=30)
-    tframe2 = ttk.Labelframe(window, text="OUTPUT", width=640, height=500)
+    tframe2 = ttk.Labelframe(window, text="OUTPUT", width=640, height=500, bootstyle="danger")
     tframe2.place(x=660, y=30)
     ctrlframe = ttk.Labelframe(window, text="CONTROL", width=250, height=500)
     ctrlframe.place(x=1320, y=30)
@@ -74,20 +96,20 @@ if __name__ == '__main__':
     lbl2.grid()
 
     # 입력값(카메라 선택)
-    label11 = ttk.Label(ctrlframe, text='CAMERA', font=('Arial', 10))
-    camera_combobox = ttk.Combobox(ctrlframe, values=["카메라 1", "카메라 2"])
-    camera_combobox.pack()
+    # label11 = ttk.Label(ctrlframe, text='CAMERA', font=('Arial', 10))
+    # camera_combobox = ttk.Combobox(ctrlframe, values=["카메라 1", "카메라 2"])
+    # camera_combobox.pack()
 
     #입력값(타겟)
-    label21 = ttk.Label(ctrlframe, text='TARGET', font=('Arial', 10))
-    label21.pack()
-    num2 = tk.StringVar()
-    nin2 = tk.Entry(ctrlframe, textvariable=num2)
-    nin2.pack()
-    nin2.insert(0, "0")
+    label = ttk.Label(ctrlframe, text=f"TARGET : {target}")
+    label.pack(padx=20, pady=10)
+    increase_button = ttk.Button(ctrlframe, text="+ Increase", command=increase_i)
+    increase_button.pack(padx=20, pady=5)
+    decrease_button = ttk.Button(ctrlframe, text="- Decrease", command=decrease_i)
+    decrease_button.pack(padx=20, pady=5)
 
-    cap = cv2.VideoCapture(select_camera(camera_combobox.get()))
-    print(camera_combobox.get())
+    cap = cv2.VideoCapture(select_camera(0))
+    print(0)
     mosaic = MosaicEncoder()
     def target_getter(number):
         try:
@@ -119,10 +141,10 @@ if __name__ == '__main__':
         # [(1x시작,1y시작), (2x,2y)...
         # [(1x끝,1y끝), (2x,2y)...
         target_axis = find_targets(frame)
-        img_w_mosaic = mosaic.makeBlur2(frame,
+        img_w_mosaic = mosaic.makeBlur3(frame,
                                        target_axis[0],
                                        target_axis[1],
-                                       target = target_getter(num2.get()))
+                                       target = target_getter(target))
 
         img2 = img_w_mosaic
         img2 = Image.fromarray(img2)  # Image 객체로 변환

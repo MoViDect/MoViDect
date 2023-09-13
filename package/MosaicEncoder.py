@@ -141,10 +141,10 @@ class MosaicEncoder:
             mosaic_loc = cv2.bitwise_or(mosaic_loc, temp_roi)
             img_w_mosaic[xys[0][1]: xys[1][1], xys[0][0]: xys[1][0]] = mosaic_loc
 
-            cv2.imshow("temp", temp_roi)
-            cv2.imshow("1", mosaic_loc)
-            cv2.imshow("2", mosaic_loc2)
-            cv2.waitKey(0)
+            # cv2.imshow("temp", temp_roi)
+            # cv2.imshow("1", mosaic_loc)
+            # cv2.imshow("2", mosaic_loc2)
+            # cv2.waitKey(0)
 
         img_w_mosaic = cv2.cvtColor(img_w_mosaic, cv2.COLOR_BGR2RGB)
 
